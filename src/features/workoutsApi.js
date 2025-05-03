@@ -13,6 +13,7 @@ export const workoutsApi = createApi({
       return headers
     },
   }),
+  tagTypes: ["Workout"], // Add this line to fix the error
   endpoints: (builder) => ({
     createNewWorkout: builder.mutation({
       invalidatesTags: (result, error, arg) => {
