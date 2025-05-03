@@ -50,25 +50,13 @@ function RootLayoutNav() {
     loadTokenFromStorage()
   }, [dispatch])
 
-  // Loading indicator
-  if (loading) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "black",
-        }}
-      >
-        <StatusBar style="light" />
-        <ActivityIndicator size="large" color="#09EDFF" />
-        <Text style={{ color: "white", marginTop: 10 }}>Loading...</Text>
-      </View>
-    )
-  }
-
-  return (
+  return loading ? (
+    <View>
+      <StatusBar style="light" />
+      <ActivityIndicator size="large" color="#09EDFF" />
+      <Text style={{ color: "white", marginTop: 10 }}>Loading...</Text>
+    </View>
+  ) : (
     <>
       <StatusBar style="light" />
       <Tabs screenOptions={screenOptions}>
