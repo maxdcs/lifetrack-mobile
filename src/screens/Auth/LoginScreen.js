@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   View,
   Text,
@@ -10,39 +10,39 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useLoginMutation } from "../features/login/loginApi";
-import { useDispatch } from "react-redux";
-import { setCredentials, saveAuthToken } from "../features/auth/authSlice";
+} from "react-native"
+import { useRouter } from "expo-router"
+import { useLoginMutation } from "../../features/loginApi"
+import { useDispatch } from "react-redux"
+import { setCredentials, saveAuthToken } from "../../features/authSlice"
 
 const LoginScreen = () => {
   const [loginFormData, setLoginFormData] = useState({
     email: "",
     password: "",
-  });
+  })
 
-  const [login, { isLoading, error }] = useLoginMutation();
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const [login, { isLoading, error }] = useLoginMutation()
+  const dispatch = useDispatch()
+  const router = useRouter()
 
   const handleFormChange = (name, value) => {
     setLoginFormData({
       ...loginFormData,
       [name]: value,
-    });
-  };
+    })
+  }
 
   const handleSubmit = async () => {
     try {
-      const userData = await login(loginFormData).unwrap();
-      await saveAuthToken(userData.token);
-      dispatch(setCredentials(userData.token));
-      router.replace("/");
+      const userData = await login(loginFormData).unwrap()
+      await saveAuthToken(userData.token)
+      dispatch(setCredentials(userData.token))
+      router.replace("/")
     } catch (err) {
-      console.error("Failed to log in:", err);
+      console.error("Failed to log in:", err)
     }
-  };
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -97,8 +97,8 @@ const LoginScreen = () => {
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -155,6 +155,6 @@ const styles = StyleSheet.create({
     color: "#09EDFF",
     fontWeight: "bold",
   },
-});
+})
 
-export default LoginScreen;
+export default LoginScreen

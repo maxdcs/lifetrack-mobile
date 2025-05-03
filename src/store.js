@@ -1,11 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
-import { loginApi } from "./features/login/loginApi"
-import { usersApi } from "./features/users/usersApi"
-import { workoutsApi } from "./features/workouts/workoutsApi"
-import {exercisesApi} from "./features/exercises/exercisesApi"
-import authReducer from "./features/auth/authSlice"
-
+import { loginApi } from "./features/loginApi"
+import { usersApi } from "./features/usersApi"
+import { workoutsApi } from "./features/workoutsApi"
+import { exercisesApi } from "./features/exercisesApi"
+import authReducer from "./features/authSlice"
 
 export const store = configureStore({
   reducer: {

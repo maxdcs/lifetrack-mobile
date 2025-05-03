@@ -1,14 +1,14 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Redirect } from 'expo-router';
-import WorkoutsScreen from '../src/screens/WorkoutsScreen';
+import React from "react"
+import { useSelector } from "react-redux"
+import { Redirect } from "expo-router"
+import WorkoutsScreen from "../src/screens/Workouts/WorkoutsScreen"
 
 export default function Workouts() {
-  const { token } = useSelector((state) => state.auth);
-  
+  const { token } = useSelector((state) => state.auth)
+
   if (!token) {
-    return <Redirect href="/auth/login" />;
+    return <Redirect href="/auth/login" />
   }
-  
-  return <WorkoutsScreen />;
+
+  return <WorkoutsScreen />
 }
