@@ -51,7 +51,7 @@ const RegisterScreen = () => {
         password: "",
         repeatPassword: "",
       })
-      router.push("/auth/login")
+      router.replace("/(auth)")
     }
 
     if (isError) {
@@ -123,7 +123,7 @@ const RegisterScreen = () => {
 
           <View style={styles.loginContainer}>
             <Text style={styles.loginText}>Already have an account?</Text>
-            <TouchableOpacity onPress={() => router.push("/auth/login")}>
+            <TouchableOpacity onPress={() => router.push("/(auth)")}>
               <Text style={styles.loginLink}>Log in</Text>
             </TouchableOpacity>
           </View>

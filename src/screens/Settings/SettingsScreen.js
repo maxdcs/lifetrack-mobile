@@ -12,7 +12,7 @@ export default function SettingsScreen() {
     dispatch(logout())
     await removeAuthToken()
     dispatch(workoutsApi.util.resetApiState())
-    router.replace("/(auth)/login")
+    router.replace("/(auth)")
   }
 
   return (

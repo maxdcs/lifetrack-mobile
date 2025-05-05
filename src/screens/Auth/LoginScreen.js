@@ -38,7 +38,7 @@ const LoginScreen = () => {
       const userData = await login(loginFormData).unwrap()
       await saveAuthToken(userData.token)
       dispatch(setCredentials(userData.token))
-      router.replace("/")
+      router.replace("/(tabs)")
     } catch (err) {
       console.error("Failed to log in:", err)
     }
@@ -90,7 +90,7 @@ const LoginScreen = () => {
 
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>Don't have an account yet?</Text>
-            <TouchableOpacity onPress={() => router.push("/auth/register")}>
+            <TouchableOpacity onPress={() => router.replace("/(auth)/register")}>
               <Text style={styles.registerLink}>Sign up</Text>
             </TouchableOpacity>
           </View>
