@@ -1,13 +1,13 @@
 import React from "react"
-import { useSelector } from "react-redux"
 import { Redirect } from "expo-router"
+import { useSelector } from "react-redux"
 import LoginScreen from "../../src/screens/Auth/LoginScreen"
 
-export default function Login() {
+export default function Index() {
   const { token } = useSelector((state) => state.auth)
 
   if (token) {
-    return <Redirect href="/" />
+    return <Redirect href="/(tabs)" />
   }
 
   return <LoginScreen />

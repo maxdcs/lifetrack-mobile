@@ -4,79 +4,63 @@ import { API_URL } from "../config"
 export const workoutsApi = createApi({
   reducerPath: "workouts",
   baseQuery: fetchBaseQuery({
-    baseUrl: API_URL, // Use centralized API URL
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`)
-      }
+      if (token) headers.set("authorization", `Bearer ${token}`)
       return headers
     },
   }),
-  tagTypes: ["Workout"], // Add this line to fix the error
+  tagTypes: ["Workout"],
   endpoints: (builder) => ({
     createNewWorkout: builder.mutation({
-      invalidatesTags: (result, error, arg) => {
-        return [{ type: "Workout", id: "LIST" }]
-      },
-      query: (name) => {
-        return {
-          url: "/workouts",
-          method: "POST",
-          body: {
-            name: name,
-          },
-        }
-      },
-    }),
-    getUserWorkouts: builder.query({
-      providesTags: (results) => {
-        // If we have results, provide a tag for each workout plus a LIST tag
-        if (results) {
-          return [
-            ...results.map(({ id }) => ({ type: "Workout", id })),
-            { type: "Workout", id: "LIST" },
-          ]
-        }
-        // If no results, just provide the LIST tag
-        return [{ type: "Workout", id: "LIST" }]
-      },
-      query: () => ({
+      query: (name) => ({
         url: "/workouts",
-        method: "GET",
+        method: "POST",
+        body: { name },
       }),
+      invalidatesTags: [{ type: "Workout", id: "LIST" }],
     }),
+
+    getUserWorkouts: builder.query({
+      query: () => ({ url: "/workouts", method: "GET" }),
+      providesTags: (results) =>
+        results
+          ? [
+              ...results.map(({ id }) => ({ type: "Workout", id })),
+              { type: "Workout", id: "LIST" },
+            ]
+          : [{ type: "Workout", id: "LIST" }],
+    }),
+
     getWorkoutById: builder.query({
-      providesTags: (result, error, workoutId) => {
-        return [{ type: "Workout", id: workoutId }]
-      },
-      query: (workoutId) => {
-        return {
-          url: `/workouts/${workoutId}`,
-          method: "GET",
-        }
-      },
+      query: (workoutId) => ({ url: `/workouts/${workoutId}`, method: "GET" }),
+      providesTags: (result, error, workoutId) => [
+        { type: "Workout", id: workoutId },
+      ],
     }),
+
     updateWorkoutById: builder.mutation({
-      query: (arg) => ({
-        url: `/workouts/${arg.workoutId}`,
+      query: ({ workoutId, workoutFormData }) => ({
+        url: `/workouts/${workoutId}`,
         method: "PUT",
-        body: { workoutFormData: arg.workoutFormData },
+        body: { workoutFormData },
       }),
+      invalidatesTags: (result, error, { workoutId }) => [
+        { type: "Workout", id: workoutId },
+        { type: "Workout", id: "LIST" },
+      ],
     }),
+
     deleteWorkoutWithId: builder.mutation({
-      invalidatesTags: (result, error, workoutId) => {
-        return [
-          { type: "Workout", id: workoutId },
-          { type: "Workout", id: "LIST" },
-        ]
-      },
-      query: (idOfWorkoutToDelete) => {
-        return {
-          url: `/workouts/${idOfWorkoutToDelete}`,
-          method: "DELETE",
-        }
-      },
+      query: (workoutId) => ({
+        url: `/workouts/${workoutId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, workoutId) => [
+        { type: "Workout", id: workoutId },
+        { type: "Workout", id: "LIST" },
+      ],
     }),
   }),
 })

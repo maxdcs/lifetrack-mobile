@@ -1,24 +1,24 @@
 import React from "react"
-import { View, Text, StyleSheet } from "react-native"
+import { View, Text, StyleSheet, Pressable } from "react-native"
 
-const WorkoutListItem = ({ workout }) => {
+const WorkoutListItem = ({ workout, onPress }) => {
   return (
-    <View style={styles.workoutItem}>
+    <Pressable onPress={onPress} style={styles.workoutTile}>
       <Text style={styles.workoutName}>{workout.name}</Text>
-      <Text style={styles.exerciseCount}>
-        {workout.exercises?.length || 0} exercises
-      </Text>
-    </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
-  workoutItem: {
+  workoutTile: {
     backgroundColor: "#222",
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
+    width: "48%",
+    height: 140,
   },
+  workoutItem: {},
   workoutName: {
     color: "white",
     fontSize: 18,

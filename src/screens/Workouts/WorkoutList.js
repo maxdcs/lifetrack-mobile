@@ -1,36 +1,66 @@
-import React from "react"
-import { View, Text, StyleSheet } from "react-native"
+import React, { useState } from "react"
+import { FlatList, Text, StyleSheet, View, Modal } from "react-native"
 import WorkoutListItem from "./WorkoutListItem"
 import { useGetUserWorkoutsQuery } from "../../features/workoutsApi"
-import { useSelector } from "react-redux"
+import WorkoutListCardModal from "./WorkoutListCardModal"
 
-const WorkoutList = () => {
+export default function WorkoutList() {
+  const { data: workouts, isLoading, isError } = useGetUserWorkoutsQuery()
+  const [selectedWorkout, setSelectedWorkout] = useState(null)
+  const [isWorkoutListCardModalShowing, setIsWorkoutListCardModalShowing] = useState(false)
 
-  
-  
-  const { data: workouts, isLoading } = useGetUserWorkoutsQuery()
+  //#region Workouts fetch error handling
 
-  return isLoading ? (
-    <Text style={styles.loadingText}>Loading workouts...</Text>
-  ) : (
-    <View style={styles.container}>
-      {workouts.map((workout) => (
-        <WorkoutListItem key={workout.id} workout={workout} />
-      ))}
+  if (isLoading) return <Text style={styles.message}>Loading...</Text>
+  if (isError) return <Text style={styles.message}>Error loading workouts</Text>
+  if (!workouts || workouts.length === 0)
+    return <Text style={styles.message}>No workouts found.</Text>
+  //#endregion
+
+  const handleSelectWorkoutById = (id) => {
+    const theWorkoutToSelect = workouts.find((w) => w.id === id)
+    setSelectedWorkout(theWorkoutToSelect)
+    setIsWorkoutListCardModalShowing(true)
+  }
+
+  const handleCloseWorkoutListCardModal = () => {
+    setIsWorkoutListCardModalShowing(false)
+  }
+
+  return (
+    <View>
+      <FlatList
+        data={workouts}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        renderItem={({ item }) => <WorkoutListItem workout={item} onPress={() => handleSelectWorkoutById(item.id)} />}
+        columnWrapperStyle={styles.row}
+        // I guess we add an onPress here?
+        contentContainerStyle={styles.listContainer}
+      />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isWorkoutListCardModalShowing}
+        onRequestClose={handleCloseWorkoutListCardModal}
+        statusBarTranslucent={true}
+      >
+        <WorkoutListCardModal closeModal={handleCloseWorkoutListCardModal} workout={selectedWorkout}/>
+      </Modal>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
+  listContainer: {},
+  row: {
+    justifyContent: "space-between",
+    marginBottom: 2,
   },
-  loadingText: {
+  message: {
     color: "#888",
     fontSize: 16,
     textAlign: "center",
     marginTop: 40,
   },
 })
-
-export default WorkoutList
