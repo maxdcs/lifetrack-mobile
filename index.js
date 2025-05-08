@@ -8,6 +8,7 @@ export function App() {
     'Exo2': require('../mobile/assets/fonts/Exo2-VariableFont_wght.ttf'),
     'SpaceGrotesk': require('../mobile/assets/fonts/SpaceGrotesk-VariableFont_wght.ttf'),
   })
+  
 
   if (!fontsLoaded) return null
 
