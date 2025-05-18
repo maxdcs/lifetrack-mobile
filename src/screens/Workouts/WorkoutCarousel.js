@@ -34,4 +34,4 @@ const WorkoutCarousel = ({ workouts = [] }) => {
   );
 };
 
-export default WorkoutCarousel;
+export default WorkoutCarousel

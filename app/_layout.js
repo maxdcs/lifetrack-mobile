@@ -58,7 +58,7 @@ function RootLayoutNav() { // Handles "is the auth state ready?"
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="workouts/[id]/customize" />
+        <Stack.Screen name="workouts/[id]/edit" />
       </Stack>
     </>
   )
