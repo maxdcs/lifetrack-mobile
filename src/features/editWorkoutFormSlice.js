@@ -37,9 +37,20 @@ const editWorkoutFormSlice = createSlice({
       state.exercises = [...state.exercises, ...exercisesReadyToAdd]
       state.isDirty = true
     },
+    clearEditWorkoutForm: (state) => {
+      const initialState = getInitialState()
+      state.name = initialState.name
+      state.exercises = initialState.exercises
+      state.isDirty = initialState.isDirty
+    },
   },
 })
 
-export const { initializeWorkoutFormName, initializeWorkoutFormExercises, updateWorkoutFormName, addExercisesToWorkoutForm } =
-  editWorkoutFormSlice.actions
+export const {
+  initializeWorkoutFormName,
+  initializeWorkoutFormExercises,
+  updateWorkoutFormName,
+  addExercisesToWorkoutForm,
+  clearEditWorkoutForm
+} = editWorkoutFormSlice.actions
 export default editWorkoutFormSlice.reducer

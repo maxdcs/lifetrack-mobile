@@ -1,3 +1,5 @@
+// imports
+
 import {
   View,
   Text,
@@ -15,23 +17,33 @@ import {
 import { useDebounce } from "../../../hooks/useDebounce"
 import { useDispatch, useSelector } from "react-redux"
 import {
+  clearEditWorkoutForm,
   initializeWorkoutFormName,
   updateWorkoutFormName,
 } from "../../features/editWorkoutFormSlice"
 
+// #endregion imports
+
 export default function EditWorkoutScreen() {
-  const editWorkoutForm = useSelector((state) => state.editWorkoutForm)
-  const [isEditingName, setIsEditingName] = useState(false)
   const dispatch = useDispatch()
   const params = useLocalSearchParams()
+  const editWorkoutForm = useSelector((state) => state.editWorkoutForm)
+  
   const workoutId = params.id
+  
+  const [isEditingName, setIsEditingName] = useState(false)
+
+  // #region useGetWorkoutByIdQuery hook
   const {
     data: fetchedWorkout,
     isLoading: workoutFetchingIsLoading,
     isSuccess: workoutFetchingIsSuccess,
   } = useGetWorkoutByIdQuery(workoutId)
+  // #endregion
+  // #region useUpdateWorkoutByIdMutation hook
   const [updateWorkoutById] = useUpdateWorkoutByIdMutation()
-
+  // #endregion
+  // #region initialization of editWorkoutForm state in RTK
   useEffect(() => {
     if (workoutFetchingIsSuccess && fetchedWorkout && !editWorkoutForm.isDirty) {
       dispatch(initializeWorkoutFormName(fetchedWorkout.name))
@@ -43,14 +55,29 @@ export default function EditWorkoutScreen() {
     fetchedWorkout?.name,
     workoutFetchingIsSuccess,
   ])
-
+  // #endregion
+  // #region autosave functionality
   const debouncedWorkoutForm = useDebounce(editWorkoutForm)
 
   useEffect(() => {
     if (workoutId && debouncedWorkoutForm && debouncedWorkoutForm.isDirty) {
-      updateWorkoutById({ workoutId, workoutFormData: debouncedWorkoutForm })
+      const payload = {
+        name: debouncedWorkoutForm.name,
+        exercises: debouncedWorkoutForm.exercises,
+      }
+      updateWorkoutById({ workoutId, workoutFormData: payload })
     }
   }, [debouncedWorkoutForm, updateWorkoutById, workoutId])
+
+  // #endregion
+  // #region workoutFormData cleanup on unmount
+  useEffect(() => {
+    return () => {
+      console.log("EditWorkoutScreen unmounting, clearing form state.")
+      dispatch(clearEditWorkoutForm())
+    }
+  }, [dispatch])
+  // #endregion
 
   return workoutFetchingIsLoading ? (
     <Text>Loading...</Text>
