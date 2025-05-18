@@ -3,9 +3,12 @@ import React, { useEffect, useState } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { useGetWorkoutByIdQuery } from "../../features/workoutsApi"
 import { useDebounce } from "../../../hooks/useDebounce"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { initializeWorkoutFormName } from "../../features/editWorkoutFormSlice"
 
 export default function EditWorkoutScreen() {
+  const editWorkoutForm = useSelector((state) => state.editWorkoutForm)
+  const dispatch = useDispatch()
   const params = useLocalSearchParams()
   const workoutId = params.id
   const {
@@ -14,9 +17,11 @@ export default function EditWorkoutScreen() {
     isSuccess: workoutFetchingIsSuccess,
   } = useGetWorkoutByIdQuery(workoutId)
 
-  const workoutForm = useSelector(state => state.editWorkoutForm)
-
-  
+  useEffect(() => {
+    if (workoutFetchingIsSuccess && !editWorkoutForm.isDirty) {
+      dispatch(initializeWorkoutFormName(fetchedWorkout.name))
+    }
+  }, [dispatch, editWorkoutForm.isDirty, fetchedWorkout.name, workoutFetchingIsSuccess])
 
   return workoutFetchingIsLoading ? (
     <Text>Loading...</Text>
@@ -27,7 +32,7 @@ export default function EditWorkoutScreen() {
       resizeMode="cover"
     >
       <View>
-        <TextInput/>
+        <TextInput />
       </View>
       <View>
         <Text></Text>

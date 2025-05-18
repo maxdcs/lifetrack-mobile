@@ -4,7 +4,7 @@ const getInitialState = () => {
   return {
     name: "",
     exercises: [],
-    dirty: false,
+    isDirty: false,
   }
 }
 
@@ -20,7 +20,7 @@ const editWorkoutFormSlice = createSlice({
     },
     updateWorkoutFormName: (state, action) => {
       state.name = action.payload
-      state.dirty = true
+      state.isDirty = true
     },
     addExercisesToWorkoutForm: (state, action) => {
       const selectedExercises = action.payload
@@ -35,7 +35,7 @@ const editWorkoutFormSlice = createSlice({
       }))
 
       state.exercises = [...state.exercises, ...exercisesReadyToAdd]
-      state.dirty = true
+      state.isDirty = true
     },
   },
 })
