@@ -17,9 +17,10 @@ import {
 import { useDebounce } from "../../../hooks/useDebounce"
 import { useDispatch, useSelector } from "react-redux"
 import {
-  clearEditWorkoutForm,
   initializeWorkoutFormName,
   updateWorkoutFormName,
+  clearEditWorkoutForm,
+  setFormPristine
 } from "../../features/editWorkoutFormSlice"
 
 // #endregion imports
@@ -38,10 +39,17 @@ export default function EditWorkoutScreen() {
     data: fetchedWorkout,
     isLoading: workoutFetchingIsLoading,
     isSuccess: workoutFetchingIsSuccess,
+    isError: workoutFetchingIsError,
+    error: workoutFetchingError
   } = useGetWorkoutByIdQuery(workoutId)
   // #endregion
   // #region useUpdateWorkoutByIdMutation hook
-  const [updateWorkoutById] = useUpdateWorkoutByIdMutation()
+  const [updateWorkoutById, {
+    isLoading: updateWorkoutIsLoading,
+    isSuccess: updateWorkoutIsSuccess,
+    isError: updateWorkoutIsError,
+    error: updateWorkoutError
+  }] = useUpdateWorkoutByIdMutation()
   // #endregion
   // #region initialization of editWorkoutForm state in RTK
   useEffect(() => {
@@ -50,9 +58,9 @@ export default function EditWorkoutScreen() {
     }
   }, [
     dispatch,
-    editWorkoutForm?.isDirty,
+    editWorkoutForm.isDirty,
     fetchedWorkout,
-    fetchedWorkout?.name,
+    fetchedWorkout.name,
     workoutFetchingIsSuccess,
   ])
   // #endregion
@@ -66,8 +74,15 @@ export default function EditWorkoutScreen() {
         exercises: debouncedWorkoutForm.exercises,
       }
       updateWorkoutById({ workoutId, workoutFormData: payload })
+        .unwrap()
+        .then(() => {
+          dispatch(setFormPristine())
+        })
+        .catch((error) => {
+          console.error("Failed to auto-save workout:", error)
+        })
     }
-  }, [debouncedWorkoutForm, updateWorkoutById, workoutId])
+  }, [debouncedWorkoutForm, updateWorkoutById, workoutId, dispatch])
 
   // #endregion
   // #region workoutFormData cleanup on unmount

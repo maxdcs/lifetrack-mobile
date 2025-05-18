@@ -43,6 +43,9 @@ const editWorkoutFormSlice = createSlice({
       state.exercises = initialState.exercises
       state.isDirty = initialState.isDirty
     },
+    setFormPristine: (state) => {
+      state.isDirty = false
+    }
   },
 })
 
@@ -51,6 +54,7 @@ export const {
   initializeWorkoutFormExercises,
   updateWorkoutFormName,
   addExercisesToWorkoutForm,
-  clearEditWorkoutForm
+  clearEditWorkoutForm,
+  setFormPristine
 } = editWorkoutFormSlice.actions
 export default editWorkoutFormSlice.reducer
