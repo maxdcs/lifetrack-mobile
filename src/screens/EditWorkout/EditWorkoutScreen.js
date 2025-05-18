@@ -1,13 +1,27 @@
-import { View, Text, ImageBackground, StyleSheet, TextInput } from "react-native"
+import {
+  View,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native"
 import React, { useEffect, useState } from "react"
 import { useLocalSearchParams } from "expo-router"
-import { useGetWorkoutByIdQuery } from "../../features/workoutsApi"
+import {
+  useGetWorkoutByIdQuery,
+  useUpdateWorkoutByIdMutation,
+} from "../../features/workoutsApi"
 import { useDebounce } from "../../../hooks/useDebounce"
 import { useDispatch, useSelector } from "react-redux"
-import { initializeWorkoutFormName } from "../../features/editWorkoutFormSlice"
+import {
+  initializeWorkoutFormName,
+  updateWorkoutFormName,
+} from "../../features/editWorkoutFormSlice"
 
 export default function EditWorkoutScreen() {
   const editWorkoutForm = useSelector((state) => state.editWorkoutForm)
+  const [isEditingName, setIsEditingName] = useState(false)
   const dispatch = useDispatch()
   const params = useLocalSearchParams()
   const workoutId = params.id
@@ -16,12 +30,27 @@ export default function EditWorkoutScreen() {
     isLoading: workoutFetchingIsLoading,
     isSuccess: workoutFetchingIsSuccess,
   } = useGetWorkoutByIdQuery(workoutId)
+  const [updateWorkoutById] = useUpdateWorkoutByIdMutation()
 
   useEffect(() => {
-    if (workoutFetchingIsSuccess && !editWorkoutForm.isDirty) {
+    if (workoutFetchingIsSuccess && fetchedWorkout && !editWorkoutForm.isDirty) {
       dispatch(initializeWorkoutFormName(fetchedWorkout.name))
     }
-  }, [dispatch, editWorkoutForm.isDirty, fetchedWorkout.name, workoutFetchingIsSuccess])
+  }, [
+    dispatch,
+    editWorkoutForm?.isDirty,
+    fetchedWorkout,
+    fetchedWorkout?.name,
+    workoutFetchingIsSuccess,
+  ])
+
+  const debouncedWorkoutForm = useDebounce(editWorkoutForm)
+
+  useEffect(() => {
+    if (workoutId && debouncedWorkoutForm && debouncedWorkoutForm.isDirty) {
+      updateWorkoutById({ workoutId, workoutFormData: debouncedWorkoutForm })
+    }
+  }, [debouncedWorkoutForm, updateWorkoutById, workoutId])
 
   return workoutFetchingIsLoading ? (
     <Text>Loading...</Text>
@@ -31,11 +60,24 @@ export default function EditWorkoutScreen() {
       style={styles.imageBackground}
       resizeMode="cover"
     >
-      <View>
-        <TextInput />
-      </View>
-      <View>
-        <Text></Text>
+      <View style={styles.wrapper}>
+        <TouchableOpacity onPress={() => setIsEditingName(true)} activeOpacity={0.8}>
+          {isEditingName ? (
+            <TextInput
+              value={editWorkoutForm.name}
+              onChangeText={(text) => dispatch(updateWorkoutFormName(text))}
+              onBlur={() => setIsEditingName(false)}
+              autoFocus
+              style={[styles.workoutName, styles.workoutNameEditing]}
+              placeholder="Workout name"
+              placeholderTextColor="#888"
+            />
+          ) : (
+            <Text style={styles.workoutName}>
+              {editWorkoutForm.name || "Untitled Workout"}
+            </Text>
+          )}
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   )
@@ -45,5 +87,26 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: "100%",
     height: "100%",
+  },
+  wrapper: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 64,
+  },
+  workoutName: {
+    fontSize: 36,
+    fontFamily: "SpaceGrotesk",
+    color: "#fff",
+    marginBottom: 24,
+  },
+
+  workoutNameEditing: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 179, 0, 0.46)",
+    paddingBottom: 6,
+    shadowColor: "rgb(255, 223, 150)",
+    shadowOffset: { width: 3, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
   },
 })
