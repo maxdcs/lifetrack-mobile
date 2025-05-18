@@ -2,36 +2,21 @@ import { View, Text, ImageBackground, StyleSheet, TextInput } from "react-native
 import React, { useEffect, useState } from "react"
 import { useLocalSearchParams } from "expo-router"
 import { useGetWorkoutByIdQuery } from "../../features/workoutsApi"
+import { useDebounce } from "../../../hooks/useDebounce"
+import { useSelector } from "react-redux"
 
 export default function EditWorkoutScreen() {
   const params = useLocalSearchParams()
-
-  console.log(`Got params: ${params}`)
-
   const workoutId = params.id
-
-  console.log(`workoutId: ${workoutId}`)
   const {
-    data: workout,
+    data: fetchedWorkout,
     isLoading: workoutFetchingIsLoading,
     isSuccess: workoutFetchingIsSuccess,
   } = useGetWorkoutByIdQuery(workoutId)
 
-  const [workoutFormData, setWorkoutFormData] = useState({
-    name: "",
-    exercises: [],
-  })
+  const workoutForm = useSelector(state => state.editWorkoutForm)
 
-  useEffect(() => {
-    if (workoutFetchingIsSuccess) {
-      setWorkoutFormData({
-        name: workout.name,
-        exercises: workout.exercises || [],
-      })
-    }
-  }, [workoutFetchingIsSuccess])
-
-  const handleChangeWorkoutFormData = (e) => {}
+  
 
   return workoutFetchingIsLoading ? (
     <Text>Loading...</Text>
@@ -42,10 +27,10 @@ export default function EditWorkoutScreen() {
       resizeMode="cover"
     >
       <View>
-        <TextInput value={workoutFormData.name} onChange={handleChangeWorkoutFormData} />
+        <TextInput/>
       </View>
       <View>
-        <Text>{workout.exercises.length}</Text>
+        <Text></Text>
       </View>
     </ImageBackground>
   )

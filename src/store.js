@@ -5,6 +5,8 @@ import { usersApi } from "./features/usersApi"
 import { workoutsApi } from "./features/workoutsApi"
 import { exercisesApi } from "./features/exercisesApi"
 import authReducer from "./features/authSlice"
+import editWorkoutFormReducer from "./features/editWorkoutFormSlice"
+
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +15,7 @@ export const store = configureStore({
     [workoutsApi.reducerPath]: workoutsApi.reducer,
     [exercisesApi.reducerPath]: exercisesApi.reducer,
     auth: authReducer,
+    editWorkoutForm: editWorkoutFormReducer
   },
 
   middleware: (getDefaultMiddleware) =>
